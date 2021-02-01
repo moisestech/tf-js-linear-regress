@@ -1,0 +1,24 @@
+{
+  "name": "tf-js-linear-regress",
+  "version": "1.0.0",
+  "description": "Tensorflow.js Processing Linear Regression",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moisestech/tf-js-linear-regress.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moisestech/tf-js-linear-regress/issues"
+  },
+  "homepage": "https://github.com/moisestech/tf-js-linear-regress#readme",
+  "devDependencies": {
+    "webpack": "^5.19.0",
+    "webpack-cli": "^4.4.0"
+  }
+}
