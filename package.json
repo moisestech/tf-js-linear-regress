@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/moisestech/tf-js-linear-regress#readme",
   "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.15",
+    "@babel/preset-env": "^7.12.13",
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.12.13",
     "css-loader": "^5.0.1",
     "file": "^0.2.2",
     "style-loader": "^2.0.0",
