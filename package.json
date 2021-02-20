@@ -12,8 +12,13 @@
     "type": "git",
     "url": "git+https://github.com/moisestech/tf-js-linear-regress.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Tensorflow.js",
+    "react.js",
+    "mobile",
+    "linear regress"
+  ],
+  "author": "Moises Sanabria",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/moisestech/tf-js-linear-regress/issues"
