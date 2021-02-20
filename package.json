@@ -4,6 +4,8 @@
   "description": "Tensorflow.js Processing Linear Regression",
   "main": "webpack.config.js",
   "scripts": {
+    "start": "webpack serve",
+    "build": "NODE_ENV='production' webpack",
     "test": "echo \"No test specified\""
   },
   "repository": {
