@@ -28,6 +28,21 @@ For additional info click [here]()
 
 ## 🌿 App tree
 
+```bash
+├── HOWTO.md
+├── LICENSE
+├── README.md
+├── package-lock.json
+├── package.json
+├── public
+│   ├── assets
+│   ├── favicon.ico
+│   └── index.html
+├── src
+│   └── index.js
+└── webpack.config.js
+```
+
 ## ⛰️ Roadmap
 
 1. Migrate to TypeScript
