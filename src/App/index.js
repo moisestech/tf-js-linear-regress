@@ -11,6 +11,7 @@ export default function App() {
 		// use parent to render the canvas in this ref
 		// (without that p5 will render the canvas outside of your component)
 		p5.createCanvas(500, 500).parent(canvasParentRef);
+    draw(p5);
 	};
 
 	const draw = (p5) => {
@@ -24,7 +25,9 @@ export default function App() {
 
 	return (
     <div className="sketch-container">
-      <Sketch setup={setup} draw={draw} />
+      <h5>Linear-Regression with Tensorflow.js</h5>
+      <section ref={sketchContainer} className="section"></section>
+      {/* <Sketch setup={setup} draw={draw} /> */}
     </div>
   );
 };
