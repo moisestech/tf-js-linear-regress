@@ -43,8 +43,9 @@
   "dependencies": {
     "@babel/runtime": "^7.12.13",
     "css-loader": "^5.0.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-p5": "^1.3.12",
     "style-loader": "^2.0.0"
   }
 }
