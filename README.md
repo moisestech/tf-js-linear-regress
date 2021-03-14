@@ -5,7 +5,7 @@
 ## ⚙ Features
 
 - [Tensorflow @2.8.5](https://www.tensorflow.org/js/models)
-- [P5.js]()
+- [React-P5](https://github.com/Gherciu/react-p5#readme)
 - [ES8](https://www.w3schools.com/js/js_2018.asp)
 
 ## 👁️‍🗨️ Project Preview
@@ -18,7 +18,7 @@ To start app: `npm start`
 
 ## 📚 HOW-TO
 
-For additional info click [here]()
+For additional info click [here](https://github.com/moisestech/tf-js-linear-regress/blob/main/HOWTO.md)
 
 ## 🗺 URL Tree
 
@@ -51,13 +51,11 @@ For additional info click [here]()
 
 ## To-Do's
 
-1. Finnish Webpack Config
-2. Finnish Tutorial
-3. Finnish README.md page
-4. Finnish HOWTO.md page
-5. Add Logo
-6. Add WebApp Preview Gif
-7. Add Babel Compilation
+1. Finnish Tutorial
+2. Finnish README.md page
+3. Finnish HOWTO.md page
+4. Add Logo
+5. Add WebApp Preview Gif
 
 ---
 [Moises Sanabria](https://www.moises.tech/)
