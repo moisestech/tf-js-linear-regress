@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import SketchWrapper from '../components/Sketch'
+import React from "react";
+import SketchWrapper from '../components/SketchWrapper'
 
 export default function App() {
 
