@@ -19,7 +19,7 @@
     "linear regress"
   ],
   "author": "Moises Sanabria",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/moisestech/tf-js-linear-regress/issues"
   },
@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.13",
+    "@tensorflow/tfjs": "^2.7.0",
     "css-loader": "^5.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
