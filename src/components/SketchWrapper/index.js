@@ -44,12 +44,19 @@ export default function SketchWrapper() {
   });
 
 	// loss function: mean squared error
+	// the loss function will measure how well 
+	// our linear equation fits the data. 
+	// A lower loss value = closer fit.
 	const loss = (yPred, y) => yPred.sub(y).square().mean();
 
 	// optimiser: stochastic gradient descent
+	// the optimiser function will implement 
+	// an algorithm that will adjust our coefficient values 
+	// based on the output of the loss function.
 	const learningRate = 0.5;
 	const optimizer = tf.train.sgd(learningRate);
 
+	// the train function will iteratively run our optimiser function.
 	// train function: running in the Two.js animation loop ~60 times per second
 	// optimiser.minimize() automatically adjusts our tf.variable coefficents
 	const train = () => {
@@ -69,3 +76,18 @@ export default function SketchWrapper() {
 // https://github.com/atorov/react-hooks-p5js/blob/master/src/components/P5Wrapper/index.jsx
 // https://ericjinks.com/blog/2018/linear-regression-with-tensorflow-js/
 // https://github.com/Jinksi/ericjinks.com/blob/master/src/components/ml/TFLinearRegression.js
+
+
+//
+// getting values from tensors is async
+predict([-1, 1])
+  .data()
+  .then((yVals) => {
+    // plot the Two.js line on the canvas
+    two.makeLine(
+      -1 * width, // x1
+      height * yVals[0] // y1
+    ),
+      1 * width, // x2
+      height * yVals[1] // y2
+  })
