@@ -4,10 +4,11 @@ import Sketch from "react-p5";
 let x = 50;
 let y = 50;
 
-let xs = [];
-let ys = [];
+let xVector = [];
+let yPredict = [];
 
-let m, b;
+let m = null;
+let b = null;
 
 // access tensorflow functions
 import * as tf from "@tensorflow/tfjs";
@@ -16,7 +17,7 @@ export default function SketchWrapper() {
 
 	const setup = (p5, canvasParentRef) => {
 
-    // Our coefficient variables
+    // coefficient variables
     m = tf.variable(tf.scalar(Math.random())) // slope
     b = tf.variable(tf.scalar(Math.random())) // y intercept
 		
@@ -25,14 +26,13 @@ export default function SketchWrapper() {
 		p5.createCanvas(500, 500).parent(canvasParentRef);
 	}
 
-	const draw = (p5) => {
-		p5.background(0);
-		p5.ellipse(x, y, 70, 70);
-		// NOTE: Do not use setState in the draw function or in functions that are executed
-		// in the draw function...
-		// please use normal variables or class properties for these purposes
-		x++;
-	};
+	// loss function: mean squared error
+	// the loss function will measure how well 
+	// our linear equation fits the data. 
+	// A lower loss value = closer fit.
+	const loss = (yPred, y) => {
+		return yPred.sub(y).square().mean();
+	}
 
 	const predict = (x) =>
   tf.tidy(() => {
@@ -43,11 +43,48 @@ export default function SketchWrapper() {
     return yPred
   });
 
-	// loss function: mean squared error
-	// the loss function will measure how well 
-	// our linear equation fits the data. 
-	// A lower loss value = closer fit.
-	const loss = (yPred, y) => yPred.sub(y).square().mean();
+	function mousePressed() {
+		let x = map(mouseX, 0, width, 0, 1);
+		let y = map(mouseY, 0, height, 1, 0);
+	
+		xVector.push(x);
+		yPredict.push(y);
+	};
+
+	const draw = (p5) => {
+
+		// getting values from tensors is async
+		predict([-1, 1])
+		.data()
+		.then((yVals) => {
+			// plot the Two.js line on the canvas
+			two.makeLine(
+				-1 * width, // x1
+				height * yVals[0] // y1
+			),
+				1 * width, // x2
+				height * yVals[1] // y2
+		})
+
+		p5.background(0);
+		p5.ellipse(x, y, 70, 70);
+		// NOTE: Do not use setState in the draw function or in functions that are executed
+		// in the draw function...
+		// please use normal variables or class properties for these purposes
+		x++;
+
+		stroke(255);
+		strokeWeight(8);
+
+		for (let i = 0; i< xVector.length; i++) {
+			let px = map(xVector[i], 0, 1, 0, width);
+			let py = map(yPredict[i], 0, 1, height, 0);
+			point(px, py);
+		}
+
+		const xVector = [0, 1];
+		const yPredict = predict(xVector);
+	};
 
 	// optimiser: stochastic gradient descent
 	// the optimiser function will implement 
@@ -76,18 +113,3 @@ export default function SketchWrapper() {
 // https://github.com/atorov/react-hooks-p5js/blob/master/src/components/P5Wrapper/index.jsx
 // https://ericjinks.com/blog/2018/linear-regression-with-tensorflow-js/
 // https://github.com/Jinksi/ericjinks.com/blob/master/src/components/ml/TFLinearRegression.js
-
-
-//
-// getting values from tensors is async
-predict([-1, 1])
-  .data()
-  .then((yVals) => {
-    // plot the Two.js line on the canvas
-    two.makeLine(
-      -1 * width, // x1
-      height * yVals[0] // y1
-    ),
-      1 * width, // x2
-      height * yVals[1] // y2
-  })
