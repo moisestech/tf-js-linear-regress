@@ -11,7 +11,6 @@ let m, b;
 
 function setup() {
   createCnavas(400, 400)
-  background(0);
 
   m = tf.variable(tf.scalar(random(1)));
   b = tf.variable(tf.scalar(random(1)));
