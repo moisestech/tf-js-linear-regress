@@ -11,8 +11,8 @@ export default function SketchWrapper() {
 	const [mSlope, setMslope] = useState(0);
 	const [bYintercept, setBintercept] = useState(0);
 
-	const [xVector, setXvector] = useState([]);
-	const [yVals, setYvals] = useState([]);
+	const [x_vals, setX_vals] = useState([]);
+	const [y_vals, setY_vals] = useState([]);
 
 	const learningRate = 0.5;
 
@@ -21,17 +21,6 @@ export default function SketchWrapper() {
 	// that will adjust our coefficient values 
 	// based on the output of the loss function.
 	const optimizer = tf.train.sgd(learningRate);
-
-	const setup = (p5, canvasParentRef) => {
-
-    // coefficient variables
-    setM(tf.variable(tf.scalar(Math.random()))) // slope
-    setB(tf.variable(tf.scalar(Math.random()))) // y intercept
-		
-		// use parent to render the canvas in this ref
-		// (without that p5 will render the canvas outside of your component)
-		p5.createCanvas(500, 500).parent(canvasParentRef);
-	}
 
 	// loss function: mean squared error
 	// the loss function will measure how well 
@@ -49,6 +38,29 @@ export default function SketchWrapper() {
     const yPred = xVector.mul(mSlope).add(bYintercept)
     return yPred
   });
+
+	// the train function will iteratively run our optimiser function.
+	// train function: running in the Two.js animation loop ~60 times per second
+	// optimiser.minimize() automatically adjusts our tf.variable coefficents
+	const train = () => {
+		tf.tidy(() => {
+			if (x_vals.length > 0) {
+				const y = tf.tensor1d(y_vals)
+				optimiser.minimize(() => loss(predict(x_vals), y))
+			}
+		})
+	};
+
+	const setup = (p5, canvasParentRef) => {
+
+    // coefficient variables
+    setM(tf.variable(tf.scalar(Math.random()))) // slope
+    setB(tf.variable(tf.scalar(Math.random()))) // y intercept
+		
+		// use parent to render the canvas in this ref
+		// (without that p5 will render the canvas outside of your component)
+		p5.createCanvas(500, 500).parent(canvasParentRef);
+	}
 
 	// handle click
 	function mousePressed() {
@@ -112,18 +124,6 @@ export default function SketchWrapper() {
 
 		const xVector = [0, 1];
 		const yPredict = predict(xVector);
-	};
-
-	// the train function will iteratively run our optimiser function.
-	// train function: running in the Two.js animation loop ~60 times per second
-	// optimiser.minimize() automatically adjusts our tf.variable coefficents
-	const train = () => {
-		tf.tidy(() => {
-			if (xVectors.length > 0) {
-				const y = tf.tensor1d(yVals)
-				optimiser.minimize(() => loss(predict(xVectors), y))
-			}
-		})
 	};
 
 	return (
