@@ -26,14 +26,26 @@ function mousePressed() {
 
 // creates points for linear regression
 function draw() {
-  background(0);
 
+  background(0);
   stroke(255);
   strokeWeight(8);
+
   for (let i = 0; i< xs.length; i++) {
     let px = map(xs[i], 0, 1, 0, width);
     let py = map(ys[i], 0, 1, height, 0);
   }
+
+  let x1 = map(lineX[0], 0, 1, 0, width);
+  let x2 = map(lineX[1], 0, 1, 0, width);
+
+  let y1 = map(lineY[0], 0, 1, height, 0);
+  let y2 = map(lineY[1], 0, 1, height, 0);
+
+  strokeWeight(2);
+  line(x1, y1, x2, y2);
+
+  console.log(tf.memory().numTensors);
 }
 
 // predict the ys
