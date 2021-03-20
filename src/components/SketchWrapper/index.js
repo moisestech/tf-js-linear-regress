@@ -1,25 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Sketch from "react-p5";
 
-let x = 50;
-let y = 50;
-
-let xVector = [];
-let yPredict = [];
-
-let m = null;
-let b = null;
 
 // access tensorflow functions
 import * as tf from "@tensorflow/tfjs";
 
 export default function SketchWrapper() {
 
+	// y = mx + b
+	const [mSlope, setMslope] = useState(0);
+	const [bYintercept, setBintercept] = useState(0);
+
+	const [xVectors, setXvectors] = useState([]);
+	const [yVals, setYvals] = useState([]);
+
+	const learningRate = 0.5;
+
+	// optimiser: stochastic gradient descent
+	// function will implement an algorithm 
+	// that will adjust our coefficient values 
+	// based on the output of the loss function.
+	const optimizer = tf.train.sgd(learningRate);
+
 	const setup = (p5, canvasParentRef) => {
 
     // coefficient variables
-    m = tf.variable(tf.scalar(Math.random())) // slope
-    b = tf.variable(tf.scalar(Math.random())) // y intercept
+    setM(tf.variable(tf.scalar(Math.random()))) // slope
+    setB(tf.variable(tf.scalar(Math.random()))) // y intercept
 		
 		// use parent to render the canvas in this ref
 		// (without that p5 will render the canvas outside of your component)
@@ -30,8 +37,8 @@ export default function SketchWrapper() {
 	// the loss function will measure how well 
 	// our linear equation fits the data. 
 	// A lower loss value = closer fit.
-	const loss = (yPred, y) => {
-		return yPred.sub(y).square().mean();
+	const loss = (yPred, yLabels) => {
+		return yPred.sub(yLabels).square().mean();
 	}
 
 	const predict = (x) =>
@@ -39,7 +46,7 @@ export default function SketchWrapper() {
     // Create a vector of x values
     const xVector = tf.tensor1d(x)
     // y = mx + b
-    const yPred = xVector.mul(this.m).add(this.b)
+    const yPred = xVector.mul(mSlope).add(bYintercept)
     return yPred
   });
 
@@ -47,6 +54,7 @@ export default function SketchWrapper() {
 		let x = map(mouseX, 0, width, 0, 1);
 		let y = map(mouseY, 0, height, 1, 0);
 	
+		setXvectors( arr => [...arr]);
 		xVector.push(x);
 		yPredict.push(y);
 	};
@@ -86,21 +94,14 @@ export default function SketchWrapper() {
 		const yPredict = predict(xVector);
 	};
 
-	// optimiser: stochastic gradient descent
-	// the optimiser function will implement 
-	// an algorithm that will adjust our coefficient values 
-	// based on the output of the loss function.
-	const learningRate = 0.5;
-	const optimizer = tf.train.sgd(learningRate);
-
 	// the train function will iteratively run our optimiser function.
 	// train function: running in the Two.js animation loop ~60 times per second
 	// optimiser.minimize() automatically adjusts our tf.variable coefficents
 	const train = () => {
 		tf.tidy(() => {
-			if (x_vals.length > 0) {
-				const y = tf.tensor1d(y_vals)
-				optimiser.minimize(() => loss(predict(x_vals), y))
+			if (xVectors.length > 0) {
+				const y = tf.tensor1d(yVals)
+				optimiser.minimize(() => loss(predict(xVectors), y))
 			}
 		})
 	};
