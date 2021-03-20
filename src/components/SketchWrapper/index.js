@@ -79,19 +79,22 @@ export default function SketchWrapper() {
 
 	const draw = (p5) => {
 
-		tf.tidy(() => {
-			train();
+		p5.background(0);
+		p5.stroke(255);
+		p5.strokeWeight(8);
 
-			if (this.x_vals.length > 0) {
-				const lineXs = [-1, 1]
-				const lineYPredict = this.predict(lineXs)
-				lineYPredict.data().then(lineYs => {
-					line.vertices[0].set(lineXs[0] * width, height * lineYs[0])
-					line.vertices[1].set(lineXs[1] * width, height * lineYs[1])
-					line.translation.set(0, 0)
-				})
-			}			
+		tf.tidy(() => {
+			if (x_vals.length > 0) {
+				const ys = tf.tensor1d(y_vals);
+				optimizer.minimize(() => loss(predict(x_vals), ys));
+			}
 		});
+
+		for (let i = 0; i< x_vals.length; i++) {
+			let px = map(x_vals[i], 0, 1, 0, width);
+			let py = map(y_vals[i], 0, 1, height, 0);
+			point(px, py);
+		}
 
 		// getting values from tensors is async
 		predict([-1, 1])
@@ -106,21 +109,10 @@ export default function SketchWrapper() {
 				height * yVals[1] // y2
 		})
 
-		p5.background(0);
-		p5.ellipse(x, y, 70, 70);
 		// NOTE: Do not use setState in the draw function or in functions that are executed
 		// in the draw function...
 		// please use normal variables or class properties for these purposes
 		x++;
-
-		stroke(255);
-		strokeWeight(8);
-
-		for (let i = 0; i< xVector.length; i++) {
-			let px = map(xVector[i], 0, 1, 0, width);
-			let py = map(yPredict[i], 0, 1, height, 0);
-			point(px, py);
-		}
 
 		const xVector = [0, 1];
 		const yPredict = predict(xVector);
