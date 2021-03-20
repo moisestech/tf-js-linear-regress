@@ -11,7 +11,7 @@ export default function SketchWrapper() {
 	const [mSlope, setMslope] = useState(0);
 	const [bYintercept, setBintercept] = useState(0);
 
-	const [xVectors, setXvectors] = useState([]);
+	const [xVector, setXvector] = useState([]);
 	const [yVals, setYvals] = useState([]);
 
 	const learningRate = 0.5;
@@ -50,16 +50,36 @@ export default function SketchWrapper() {
     return yPred
   });
 
+	// handle click
 	function mousePressed() {
 		let x = map(mouseX, 0, width, 0, 1);
 		let y = map(mouseY, 0, height, 1, 0);
 	
-		setXvectors( arr => [...arr]);
-		xVector.push(x);
-		yPredict.push(y);
+		setXvector( arr => [...arr]);
+		setYPredict( arr => [...arr]);
+		//xVector.push(x);
+		//yPredict.push(y);
 	};
 
+	handleClick = e => this.addpoint(e.offsetX, e.offsetY);
+
+
+
 	const draw = (p5) => {
+
+		tf.tidy(() => {
+			train();
+
+			if (this.x_vals.length > 0) {
+				const lineXs = [-1, 1]
+				const lineYPredict = this.predict(lineXs)
+				lineYPredict.data().then(lineYs => {
+					line.vertices[0].set(lineXs[0] * width, height * lineYs[0])
+					line.vertices[1].set(lineXs[1] * width, height * lineYs[1])
+					line.translation.set(0, 0)
+				})
+			}			
+		});
 
 		// getting values from tensors is async
 		predict([-1, 1])
