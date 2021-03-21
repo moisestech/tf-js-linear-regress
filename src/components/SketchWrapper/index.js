@@ -102,12 +102,14 @@ export default function SketchWrapper() {
 		let lineY = ys.dataSync();
 		ys.dispose();
 
+		// create to points on the line
 		let x1 = map(lineX[0], 0, 1, 0, width);
 		let x2 = map(lineX[1], 0, 1, 0, width);
 	
 		let y1 = map(lineY[0], 0, 1, height, 0);
 		let y2 = map(lineY[1], 0, 1, height, 0);
 	
+		// draw the line between the points
 		strokeWeight(2);
 		line(x1, y1, x2, y2);
 	
