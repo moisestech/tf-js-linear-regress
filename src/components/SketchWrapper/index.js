@@ -96,26 +96,43 @@ export default function SketchWrapper() {
 			point(px, py);
 		}
 
+		const lineX = [0, 1];
+
+		const ys = tf.tidy(() => predict(lineX));
+		let lineY = ys.dataSync();
+		ys.dispose();
+
+		let x1 = map(lineX[0], 0, 1, 0, width);
+		let x2 = map(lineX[1], 0, 1, 0, width);
+	
+		let y1 = map(lineY[0], 0, 1, height, 0);
+		let y2 = map(lineY[1], 0, 1, height, 0);
+	
+		strokeWeight(2);
+		line(x1, y1, x2, y2);
+	
+		console.log(tf.memory().numTensors);
+
 		// getting values from tensors is async
-		predict([-1, 1])
-		.data()
-		.then((yVals) => {
-			// plot the Two.js line on the canvas
-			two.makeLine(
-				-1 * width, // x1
-				height * yVals[0] // y1
-			),
-				1 * width, // x2
-				height * yVals[1] // y2
+		// predict([-1, 1])
+		// .data()
+		// .then((yVals) => {
+		// 	// plot the Two.js line on the canvas
+		// 	two.makeLine(
+		// 		-1 * width, // x1
+		// 		height * yVals[0] // y1
+		// 	),
+		// 		1 * width, // x2
+		// 		height * yVals[1] // y2
 		})
 
 		// NOTE: Do not use setState in the draw function or in functions that are executed
 		// in the draw function...
 		// please use normal variables or class properties for these purposes
-		x++;
+		// x++;
 
-		const xVector = [0, 1];
-		const yPredict = predict(xVector);
+		// const xVector = [0, 1];
+		// const yPredict = predict(xVector);
 	};
 
 	return (
