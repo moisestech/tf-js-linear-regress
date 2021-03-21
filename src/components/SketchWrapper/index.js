@@ -103,7 +103,7 @@ export default function SketchWrapper() {
 			if (x_vals.length > 0) {
 				const ys = tf.tensor1d(y_vals);
 
-				// minimize the loss
+				// minimize the loss by pred from x, y vals
 				optimizer.minimize(() => loss(predict(x_vals), ys));
 			}
 		});
@@ -138,7 +138,9 @@ export default function SketchWrapper() {
 	};
 
 	return (
-		<Sketch setup={setup} draw={draw} />
+		<Sketch setup={setup} draw={draw} onClick={e => {
+			alert(e.clientX);
+		}}/>
 	);
 };
 
