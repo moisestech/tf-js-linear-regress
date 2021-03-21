@@ -42,19 +42,19 @@ export default function SketchWrapper() {
     return tensor_yPred
   });
 
-		// handle click
-		function mousePressed() {
-			let x = map(mouseX, 0, width, 0, 1);
-			let y = map(mouseY, 0, height, 1, 0);
-		
-			setXvector( arr => [...arr]);
-			setYPredict( arr => [...arr]);
-			//xVector.push(x);
-			//yPredict.push(y);
-		};
+	// handle click
+	function mousePressed() {
+		let x = map(mouseX, 0, width, 0, 1);
+		let y = map(mouseY, 0, height, 1, 0);
 	
-		// handleClick = e => this.addpoint(e.offsetX, e.offsetY);
-	
+		setXvector( arr => [...arr]);
+		setYPredict( arr => [...arr]);
+		//xVector.push(x);
+		//yPredict.push(y);
+	};
+
+	// handleClick = e => this.addpoint(e.offsetX, e.offsetY);
+
 	
 
 	// the train function will iteratively run our optimiser function.
@@ -64,6 +64,8 @@ export default function SketchWrapper() {
 		tf.tidy(() => {
 			if (x_vals.length > 0) {
 				const y = tf.tensor1d(y_vals)
+
+				// min the loss by pred from x, y vals
 				optimiser.minimize(() => loss(predict(x_vals), y))
 			}
 		})
@@ -72,8 +74,8 @@ export default function SketchWrapper() {
 	const setup = (p5, canvasParentRef) => {
 
     // coefficient variables
-    setM(tf.variable(tf.scalar(Math.random()))) // slope
-    setB(tf.variable(tf.scalar(Math.random()))) // y intercept
+    setMslope(tf.variable(tf.scalar(Math.random()))) // slope
+    setBintercept(tf.variable(tf.scalar(Math.random()))) // y intercept
 		
 		// use parent to render the canvas in this ref
 		// (without that p5 will render the canvas outside of your component)
@@ -85,6 +87,10 @@ export default function SketchWrapper() {
 		p5.background(0);
 		p5.stroke(255);
 		p5.strokeWeight(8);
+
+		// NOTE: Do not use setState in the draw function or in functions that are executed
+		// in the draw function...
+		// please use normal variables or class properties for these purposes
 
 		tf.tidy(() => {
 			if (x_vals.length > 0) {
@@ -121,27 +127,6 @@ export default function SketchWrapper() {
 		line(x1, y1, x2, y2);
 	
 		console.log(tf.memory().numTensors);
-
-		// getting values from tensors is async
-		// predict([-1, 1])
-		// .data()
-		// .then((yVals) => {
-		// 	// plot the Two.js line on the canvas
-		// 	two.makeLine(
-		// 		-1 * width, // x1
-		// 		height * yVals[0] // y1
-		// 	),
-		// 		1 * width, // x2
-		// 		height * yVals[1] // y2
-		// })
-
-		// NOTE: Do not use setState in the draw function or in functions that are executed
-		// in the draw function...
-		// please use normal variables or class properties for these purposes
-		// x++;
-
-		// const xVector = [0, 1];
-		// const yPredict = predict(xVector);
 	};
 
 	return (
