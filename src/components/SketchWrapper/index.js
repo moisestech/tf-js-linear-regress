@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import Sketch from "react-p5";
-import { mapRange } from "utils";
+import { mapRange } from "../../utils";
 
 
 // access tensorflow functions
 import * as tf from "@tensorflow/tfjs";
 
 export default function SketchWrapper() {
+
+	const [width, setWidth] = useState(500);
+	const [height, setHeight] = useState(500);
 
 	// y = mx + b
 	const [mSlope, setMslope] = useState(0);
@@ -15,6 +18,7 @@ export default function SketchWrapper() {
 	// _underscore vals is not a tensor
 	const [x_vals, setX_vals] = useState([]);
 	const [y_vals, setY_vals] = useState([]);
+
 
 	const learningRate = 0.5;
 
@@ -105,8 +109,8 @@ export default function SketchWrapper() {
 		});
 
 		for (let i = 0; i< x_vals.length; i++) {
-			let px = num.map(x_vals[i], 0, 1, 0, width);
-			let py = map(y_vals[i], 0, 1, height, 0);
+			let px = num.mapRange(x_vals[i], 0, 1, 0, width);
+			let py = mapRange(y_vals[i], 0, 1, height, 0);
 			point(px, py);
 		}
 
@@ -119,11 +123,11 @@ export default function SketchWrapper() {
 		ys.dispose();
 
 		// create to points on the line
-		let x1 = map(lineX[0], 0, 1, 0, width);
-		let x2 = map(lineX[1], 0, 1, 0, width);
+		let x1 = mapRange(lineX[0], 0, 1, 0, width);
+		let x2 = mapRange(lineX[1], 0, 1, 0, width);
 	
-		let y1 = map(lineY[0], 0, 1, height, 0);
-		let y2 = map(lineY[1], 0, 1, height, 0);
+		let y1 = mapRange(lineY[0], 0, 1, height, 0);
+		let y2 = mapRange(lineY[1], 0, 1, height, 0);
 	
 		// draw the line between the points
 		strokeWeight(2);
