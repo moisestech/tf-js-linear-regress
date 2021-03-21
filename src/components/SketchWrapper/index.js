@@ -11,6 +11,7 @@ export default function SketchWrapper() {
 	const [mSlope, setMslope] = useState(0);
 	const [bYintercept, setBintercept] = useState(0);
 
+	// _underscore vals is not a tensor
 	const [x_vals, setX_vals] = useState([]);
 	const [y_vals, setY_vals] = useState([]);
 
@@ -33,11 +34,28 @@ export default function SketchWrapper() {
 	const predict = (x) =>
   tf.tidy(() => {
     // Create a vector of x values
-    const xVector = tf.tensor1d(x)
+    const tensor_xVector = tf.tensor1d(x)
     // y = mx + b
-    const yPred = xVector.mul(mSlope).add(bYintercept)
-    return yPred
+    const tensor_yPred = tensor_xVector.mul(mSlope).add(bYintercept)
+
+		// gives back a tensor
+    return tensor_yPred
   });
+
+		// handle click
+		function mousePressed() {
+			let x = map(mouseX, 0, width, 0, 1);
+			let y = map(mouseY, 0, height, 1, 0);
+		
+			setXvector( arr => [...arr]);
+			setYPredict( arr => [...arr]);
+			//xVector.push(x);
+			//yPredict.push(y);
+		};
+	
+		// handleClick = e => this.addpoint(e.offsetX, e.offsetY);
+	
+	
 
 	// the train function will iteratively run our optimiser function.
 	// train function: running in the Two.js animation loop ~60 times per second
@@ -62,21 +80,6 @@ export default function SketchWrapper() {
 		p5.createCanvas(500, 500).parent(canvasParentRef);
 	}
 
-	// handle click
-	function mousePressed() {
-		let x = map(mouseX, 0, width, 0, 1);
-		let y = map(mouseY, 0, height, 1, 0);
-	
-		setXvector( arr => [...arr]);
-		setYPredict( arr => [...arr]);
-		//xVector.push(x);
-		//yPredict.push(y);
-	};
-
-	handleClick = e => this.addpoint(e.offsetX, e.offsetY);
-
-
-
 	const draw = (p5) => {
 
 		p5.background(0);
@@ -86,6 +89,8 @@ export default function SketchWrapper() {
 		tf.tidy(() => {
 			if (x_vals.length > 0) {
 				const ys = tf.tensor1d(y_vals);
+
+				// minimize the loss
 				optimizer.minimize(() => loss(predict(x_vals), ys));
 			}
 		});
@@ -100,7 +105,7 @@ export default function SketchWrapper() {
 
 		// clean tensors from predict func
 		const ys = tf.tidy(() => predict(lineX));
-		
+
 		let lineY = ys.dataSync();
 		ys.dispose();
 
