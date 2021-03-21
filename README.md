@@ -56,6 +56,9 @@ For additional info click [here](https://github.com/moisestech/tf-js-linear-regr
 3. Finnish HOWTO.md page
 4. Add Logo
 5. Add WebApp Preview Gif
+6. Visualize a Graph of the Loss Value
+7. Make the Learning Rate Interactive
+8. Select Optimizers
 
 ---
 [Moises Sanabria](https://www.moises.tech/)
