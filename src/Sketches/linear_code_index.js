@@ -1,40 +1,68 @@
-// https://youtu.be/dLp10CFIvxI?t=1044
+// Daniel Shiffman
+// http://codingtra.in
+// http://patreon.com/codingtrain
 
-import LinearRegress from "../components/LinearRegress";
+// Linear Regression with TensorFlow.js
+// Video: https://www.youtube.com/watch?v=dLp10CFIvxI
 
-export default LinearRegress (s) {
-
-let xs = [];
-let ys = [];
+let x_vals = [];
+let y_vals = [];
 
 let m, b;
 
-function setup() {
-  createCnavas(400, 400)
+const learningRate = 0.5;
+const optimizer = tf.train.sgd(learningRate);
 
+function setup() {
+  createCanvas(400, 400);
   m = tf.variable(tf.scalar(random(1)));
   b = tf.variable(tf.scalar(random(1)));
+}
+
+function loss(pred, labels) {
+  return pred
+    .sub(labels)
+    .square()
+    .mean();
+}
+
+function predict(x) {
+  const xs = tf.tensor1d(x);
+  // y = mx + b;
+  const ys = xs.mul(m).add(b);
+  return ys;
 }
 
 function mousePressed() {
   let x = map(mouseX, 0, width, 0, 1);
   let y = map(mouseY, 0, height, 1, 0);
-
-  xs.push(x);
-  ys.push(y);
+  x_vals.push(x);
+  y_vals.push(y);
 }
 
-// creates points for linear regression
 function draw() {
+  tf.tidy(() => {
+    if (x_vals.length > 0) {
+      const ys = tf.tensor1d(y_vals);
+      optimizer.minimize(() => loss(predict(x_vals), ys));
+    }
+  });
 
   background(0);
+
   stroke(255);
   strokeWeight(8);
-
-  for (let i = 0; i< xs.length; i++) {
-    let px = map(xs[i], 0, 1, 0, width);
-    let py = map(ys[i], 0, 1, height, 0);
+  for (let i = 0; i < x_vals.length; i++) {
+    let px = map(x_vals[i], 0, 1, 0, width);
+    let py = map(y_vals[i], 0, 1, height, 0);
+    point(px, py);
   }
+
+  const lineX = [0, 1];
+
+  const ys = tf.tidy(() => predict(lineX));
+  let lineY = ys.dataSync();
+  ys.dispose();
 
   let x1 = map(lineX[0], 0, 1, 0, width);
   let x2 = map(lineX[1], 0, 1, 0, width);
@@ -46,36 +74,5 @@ function draw() {
   line(x1, y1, x2, y2);
 
   console.log(tf.memory().numTensors);
+  //noLoop();
 }
-
-// predict the ys
-function predict(xs) {
-  const tfxs = tf.tensor1d(xs);
-  // y = mx + b;
-  const ys = tfxs.mul(m).add(b)
-  return ys;
-}
-
-
-// root mean squared error
-
-
-// loss function
-
-
-// minimizer
-
-
-
-
-// learning rate
-const learningRate = 0.01;
-
-// optimizer w/ stochastic gradient descent
-const optimizer = tf.train.sgd(learningRate);
-
-
-
-
-
-
