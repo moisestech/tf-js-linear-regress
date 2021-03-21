@@ -120,6 +120,7 @@ export default function SketchWrapper() {
 		const ys = tf.tidy(() => predict(lineX));
 
 		let lineY = ys.dataSync();
+		// clean tensors to avoid meme leaks
 		ys.dispose();
 
 		// create to points on the line
