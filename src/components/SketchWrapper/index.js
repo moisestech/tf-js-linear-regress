@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sketch from "react-p5";
+import { mapRange } from "utils";
 
 
 // access tensorflow functions
@@ -44,8 +45,10 @@ export default function SketchWrapper() {
 
 	// handle click
 	function mousePressed() {
-		let x = map(mouseX, 0, width, 0, 1);
-		let y = map(mouseY, 0, height, 1, 0);
+
+		// map normalize clicked pixels between 0 to 1
+		let x = mapRange(mouseX, 0, width, 0, 1);
+		let y = mapRange(mouseY, 0, height, 1, 0);
 	
 		setXvector( arr => [...arr]);
 		setYPredict( arr => [...arr]);
@@ -102,7 +105,7 @@ export default function SketchWrapper() {
 		});
 
 		for (let i = 0; i< x_vals.length; i++) {
-			let px = map(x_vals[i], 0, 1, 0, width);
+			let px = num.map(x_vals[i], 0, 1, 0, width);
 			let py = map(y_vals[i], 0, 1, height, 0);
 			point(px, py);
 		}
