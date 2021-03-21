@@ -138,7 +138,7 @@ export default function SketchWrapper() {
 	};
 
 	return (
-		<Sketch setup={setup} draw={draw} onClick={e => {
+		<Sketch setup={setup} draw={draw} mouseClicked={e => {
 			alert(e.clientX);
 		}}/>
 	);
