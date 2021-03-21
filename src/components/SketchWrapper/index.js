@@ -130,8 +130,8 @@ export default function SketchWrapper() {
 		let y2 = mapRange(lineY[1], 0, 1, height, 0);
 	
 		// draw the line between the points
-		strokeWeight(2);
-		line(x1, y1, x2, y2);
+		p5.strokeWeight(2);
+		p5.line(x1, y1, x2, y2);
 	
 		console.log(tf.memory().numTensors);
 	};
