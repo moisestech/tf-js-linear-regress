@@ -98,7 +98,9 @@ export default function SketchWrapper() {
 
 		const lineX = [0, 1];
 
+		// clean tensors from predict func
 		const ys = tf.tidy(() => predict(lineX));
+		
 		let lineY = ys.dataSync();
 		ys.dispose();
 
@@ -126,7 +128,7 @@ export default function SketchWrapper() {
 		// 	),
 		// 		1 * width, // x2
 		// 		height * yVals[1] // y2
-		})
+		// })
 
 		// NOTE: Do not use setState in the draw function or in functions that are executed
 		// in the draw function...
