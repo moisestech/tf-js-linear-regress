@@ -5,7 +5,7 @@ export default function App() {
 
 	return (
     <div className="sketch-container">
-      <h5>Linear-Regression with Tensorflow.js</h5>
+      <h1>Linear-Regression with Tensorflow.js</h1>
       <SketchWrapper />
     </div>
   );
