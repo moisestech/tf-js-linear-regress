@@ -54,17 +54,12 @@ export default function SketchWrapper() {
 	function mousePressed(mouseX, mouseY) {
 
 		// map normalize clicked pixels between 0 to 1
-		let x = mapRange(mouseX, 0, canvWidth, 0, 1);
-		let y = mapRange(mouseY, 0, canvHeight, 1, 0);
+		let new_mouseX = mapRange(mouseX, 0, canvWidth, 0, 1);
+		let new_mouseY = mapRange(mouseY, 0, canvHeight, 1, 0);
 	
-		setXvector( arr => [...arr]);
-		setYPredict( arr => [...arr]);
-		//xVector.push(x);
-		//yPredict.push(y);
+		setX_vals( prevArr => [...prevArr, new_mouseX]);
+		setY_vals( prevArr => [...prevArr, new_mouseY]);
 	};
-
-	// handleClick = e => this.addpoint(e.offsetX, e.offsetY);
-
 	
 
 	// the train function will iteratively run our optimiser function.
@@ -112,10 +107,12 @@ export default function SketchWrapper() {
 		});
 
 		for (let i = 0; i< x_vals.length; i++) {
-			let px = num.mapRange(x_vals[i], 0, 1, 0, width);
-			let py = mapRange(y_vals[i], 0, 1, height, 0);
-			point(px, py);
+			let px = mapRange(x_vals[i], 0, 1, 0, canvWidth);
+			let py = mapRange(y_vals[i], 0, 1, canvHeight, 0);
+			point(px, py)
 		}
+
+		console.log({x_vals}, {y_vals});
 
 		const lineX = [0, 1];
 
