@@ -110,10 +110,8 @@ export default function SketchWrapper() {
 		for (let i = 0; i< x_vals.length; i++) {
 			let px = mapRange(x_vals[i], 0, 1, 0, canvWidth);
 			let py = mapRange(y_vals[i], 0, 1, canvHeight, 0);
-			point(px, py)
+			p5.point(px, py)
 		}
-
-		console.log({x_vals}, {y_vals});
 
 		const lineX = [0, 1];
 
@@ -136,6 +134,7 @@ export default function SketchWrapper() {
 		p5.line(x1, y1, x2, y2);
 	
 		console.log(tf.memory().numTensors);
+		console.log({x_vals}, {y_vals});
 	};
 
 	return (
