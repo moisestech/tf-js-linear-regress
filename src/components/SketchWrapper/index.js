@@ -29,7 +29,7 @@ export default function SketchWrapper() {
 
 	const learningRate = 0.5;
 
-	// optimiser: stochastic gradient descent
+	// optimiser: (sgd) stochastic gradient descent
 	// function will implement an algorithm 
 	// that will adjust our coefficient values 
 	// based on the output of the loss function.
