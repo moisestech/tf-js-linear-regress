@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+
+// https://github.com/Gherciu/react-p5
 import Sketch from "react-p5";
 import { mapRange } from "../../utils";
+
 
 
 // access tensorflow functions
@@ -8,8 +11,8 @@ import * as tf from "@tensorflow/tfjs";
 
 export default function SketchWrapper() {
 
-	const [width, setWidth] = useState(500);
-	const [height, setHeight] = useState(500);
+	const [canvWidth, setCanvWidth] = useState(500);
+	const [canvHeight, setCanvHeight] = useState(500);
 
 	// y = mx + b
 	const [mSlope, setMslope] = useState(0);
@@ -48,11 +51,11 @@ export default function SketchWrapper() {
   });
 
 	// handle click
-	function mousePressed() {
+	function mousePressed(mouseX, mouseY) {
 
 		// map normalize clicked pixels between 0 to 1
-		let x = mapRange(mouseX, 0, width, 0, 1);
-		let y = mapRange(mouseY, 0, height, 1, 0);
+		let x = mapRange(mouseX, 0, canvWidth, 0, 1);
+		let y = mapRange(mouseY, 0, canvHeight, 1, 0);
 	
 		setXvector( arr => [...arr]);
 		setYPredict( arr => [...arr]);
@@ -86,7 +89,7 @@ export default function SketchWrapper() {
 		
 		// use parent to render the canvas in this ref
 		// (without that p5 will render the canvas outside of your component)
-		p5.createCanvas(500, 500).parent(canvasParentRef);
+		p5.createCanvas(canvWidth, canvHeight).parent(canvasParentRef);
 	}
 
 	const draw = (p5) => {
@@ -124,11 +127,11 @@ export default function SketchWrapper() {
 		ys.dispose();
 
 		// create to points on the line
-		let x1 = mapRange(lineX[0], 0, 1, 0, width);
-		let x2 = mapRange(lineX[1], 0, 1, 0, width);
+		let x1 = mapRange(lineX[0], 0, 1, 0, canvWidth);
+		let x2 = mapRange(lineX[1], 0, 1, 0, canvWidth);
 	
-		let y1 = mapRange(lineY[0], 0, 1, height, 0);
-		let y2 = mapRange(lineY[1], 0, 1, height, 0);
+		let y1 = mapRange(lineY[0], 0, 1, canvHeight, 0);
+		let y2 = mapRange(lineY[1], 0, 1, canvHeight, 0);
 	
 		// draw the line between the points
 		p5.strokeWeight(2);
@@ -139,7 +142,7 @@ export default function SketchWrapper() {
 
 	return (
 		<Sketch setup={setup} draw={draw} mouseClicked={e => {
-			alert(e.clientX);
+			mousePressed(e.mouseX, e.mouseY);
 		}}/>
 	);
 };
