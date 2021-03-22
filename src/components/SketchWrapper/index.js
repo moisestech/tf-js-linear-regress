@@ -105,7 +105,8 @@ export default function SketchWrapper() {
 				optimizer.minimize(() => loss(predict(x_vals), ys));
 			}
 		});
-
+		
+		// loop mouse coordinate and plot clicked points
 		for (let i = 0; i< x_vals.length; i++) {
 			let px = mapRange(x_vals[i], 0, 1, 0, canvWidth);
 			let py = mapRange(y_vals[i], 0, 1, canvHeight, 0);
