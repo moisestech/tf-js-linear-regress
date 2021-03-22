@@ -22,6 +22,10 @@ export default function SketchWrapper() {
 	const [x_vals, setX_vals] = useState([]);
 	const [y_vals, setY_vals] = useState([]);
 
+	// cartesian coordinates
+	const initCoordinate = -1;
+	const endCoordinate = 1;
+
 
 	const learningRate = 0.5;
 
@@ -54,8 +58,8 @@ export default function SketchWrapper() {
 	function mousePressed(mouseX, mouseY) {
 
 		// map normalize clicked pixels between 0 to 1
-		let new_mouseX = mapRange(mouseX, 0, canvWidth, 0, 1);
-		let new_mouseY = mapRange(mouseY, 0, canvHeight, 1, 0);
+		let new_mouseX = mapRange(mouseX, 0, canvWidth, initCoordinate, endCoordinate);
+		let new_mouseY = mapRange(mouseY, 0, canvHeight, endCoordinate, initCoordinate);
 	
 		setX_vals( prevArr => [...prevArr, new_mouseX]);
 		setY_vals( prevArr => [...prevArr, new_mouseY]);
@@ -108,12 +112,12 @@ export default function SketchWrapper() {
 		
 		// loop mouse coordinate and plot clicked points
 		for (let i = 0; i< x_vals.length; i++) {
-			let px = mapRange(x_vals[i], 0, 1, 0, canvWidth);
-			let py = mapRange(y_vals[i], 0, 1, canvHeight, 0);
+			let px = mapRange(x_vals[i], initCoordinate, endCoordinate, 0, canvWidth);
+			let py = mapRange(y_vals[i], initCoordinate, endCoordinate, canvHeight, 0);
 			p5.point(px, py)
 		}
 
-		const lineX = [0, 1];
+		const lineX = [initCoordinate, 1];
 
 		// clean tensors from predict func
 		const ys = tf.tidy(() => predict(lineX));
@@ -123,11 +127,11 @@ export default function SketchWrapper() {
 		ys.dispose();
 
 		// create to points on the line
-		let x1 = mapRange(lineX[0], 0, 1, 0, canvWidth);
-		let x2 = mapRange(lineX[1], 0, 1, 0, canvWidth);
+		let x1 = mapRange(lineX[0], initCoordinate, endCoordinate, 0, canvWidth);
+		let x2 = mapRange(lineX[1], initCoordinate, endCoordinate, 0, canvWidth);
 	
-		let y1 = mapRange(lineY[0], 0, 1, canvHeight, 0);
-		let y2 = mapRange(lineY[1], 0, 1, canvHeight, 0);
+		let y1 = mapRange(lineY[0], initCoordinate, endCoordinate, canvHeight, 0);
+		let y2 = mapRange(lineY[1], initCoordinate, endCoordinate, canvHeight, 0);
 	
 		// draw the line between the points
 		p5.strokeWeight(2);
