@@ -1,152 +1,166 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 // https://github.com/Gherciu/react-p5
-import Sketch from "react-p5";
-import { mapRange } from "../../utils";
-
-
+import Sketch from 'react-p5';
+import { mapRange } from '../../utils';
 
 // access tensorflow functions
-import * as tf from "@tensorflow/tfjs";
+import * as tf from '@tensorflow/tfjs';
 
 export default function SketchWrapper() {
+  const [canvWidth, setCanvWidth] = useState(500);
+  const [canvHeight, setCanvHeight] = useState(500);
 
-	const [canvWidth, setCanvWidth] = useState(500);
-	const [canvHeight, setCanvHeight] = useState(500);
+  // y = mx + b
+  const [mSlope, setMslope] = useState(0);
+  const [bYintercept, setBintercept] = useState(0);
 
-	// y = mx + b
-	const [mSlope, setMslope] = useState(0);
-	const [bYintercept, setBintercept] = useState(0);
+  // _underscore vals is not a tensor
+  const [x_vals, setX_vals] = useState([]);
+  const [y_vals, setY_vals] = useState([]);
 
-	// _underscore vals is not a tensor
-	const [x_vals, setX_vals] = useState([]);
-	const [y_vals, setY_vals] = useState([]);
+  // cartesian coordinates
+  const initCoordinate = -1;
+  const endCoordinate = 1;
 
-	// cartesian coordinates
-	const initCoordinate = -1;
-	const endCoordinate = 1;
+  const learningRate = 0.5;
 
+  // optimiser: (sgd) stochastic gradient descent
+  // function will implement an algorithm
+  // that will adjust our coefficient values
+  // based on the output of the loss function.
+  const optimizer = tf.train.sgd(learningRate);
 
-	const learningRate = 0.5;
+  // loss function: mean squared error
+  // the loss function will measure how well
+  // our linear equation fits the data.
+  // A lower loss value = closer fit.
+  const loss = (yPred, yLabels) => {
+    return yPred.sub(yLabels).square().mean();
+  };
 
-	// optimiser: (sgd) stochastic gradient descent
-	// function will implement an algorithm 
-	// that will adjust our coefficient values 
-	// based on the output of the loss function.
-	const optimizer = tf.train.sgd(learningRate);
+  const predict = (x) =>
+    tf.tidy(() => {
+      // Create a vector of x values
+      const tensor_xVector = tf.tensor1d(x);
+      // y = mx + b
+      const tensor_yPred = tensor_xVector.mul(mSlope).add(bYintercept);
 
-	// loss function: mean squared error
-	// the loss function will measure how well 
-	// our linear equation fits the data. 
-	// A lower loss value = closer fit.
-	const loss = (yPred, yLabels) => {
-		return yPred.sub(yLabels).square().mean();
-	}
+      // gives back a tensor
+      return tensor_yPred;
+    });
 
-	const predict = (x) =>
-  tf.tidy(() => {
-    // Create a vector of x values
-    const tensor_xVector = tf.tensor1d(x)
-    // y = mx + b
-    const tensor_yPred = tensor_xVector.mul(mSlope).add(bYintercept)
+  // handle click
+  function mousePressed(mouseX, mouseY) {
+    // map normalize clicked pixels between 0 to 1
+    let new_mouseX = mapRange(
+      mouseX,
+      0,
+      canvWidth,
+      initCoordinate,
+      endCoordinate
+    );
+    let new_mouseY = mapRange(
+      mouseY,
+      0,
+      canvHeight,
+      endCoordinate,
+      initCoordinate
+    );
 
-		// gives back a tensor
-    return tensor_yPred
-  });
+    setX_vals((prevArr) => [...prevArr, new_mouseX]);
+    setY_vals((prevArr) => [...prevArr, new_mouseY]);
+  }
 
-	// handle click
-	function mousePressed(mouseX, mouseY) {
+  // the train function will iteratively run our optimiser function.
+  // train function: running in the Two.js animation loop ~60 times per second
+  // optimiser.minimize() automatically adjusts our tf.variable coefficents
+  const train = () => {
+    tf.tidy(() => {
+      if (x_vals.length > 0) {
+        const y = tf.tensor1d(y_vals);
 
-		// map normalize clicked pixels between 0 to 1
-		let new_mouseX = mapRange(mouseX, 0, canvWidth, initCoordinate, endCoordinate);
-		let new_mouseY = mapRange(mouseY, 0, canvHeight, endCoordinate, initCoordinate);
-	
-		setX_vals( prevArr => [...prevArr, new_mouseX]);
-		setY_vals( prevArr => [...prevArr, new_mouseY]);
-	};
-	
+        // min the loss by pred from x, y vals
+        optimiser.minimize(() => loss(predict(x_vals), y));
+      }
+    });
+  };
 
-	// the train function will iteratively run our optimiser function.
-	// train function: running in the Two.js animation loop ~60 times per second
-	// optimiser.minimize() automatically adjusts our tf.variable coefficents
-	const train = () => {
-		tf.tidy(() => {
-			if (x_vals.length > 0) {
-				const y = tf.tensor1d(y_vals)
-
-				// min the loss by pred from x, y vals
-				optimiser.minimize(() => loss(predict(x_vals), y))
-			}
-		})
-	};
-
-	const setup = (p5, canvasParentRef) => {
-
+  const setup = (p5, canvasParentRef) => {
     // coefficient variables
-    setMslope(tf.variable(tf.scalar(Math.random()))) // slope
-    setBintercept(tf.variable(tf.scalar(Math.random()))) // y intercept
-		
-		// use parent to render the canvas in this ref
-		// (without that p5 will render the canvas outside of your component)
-		p5.createCanvas(canvWidth, canvHeight).parent(canvasParentRef);
-	}
+    setMslope(tf.variable(tf.scalar(Math.random()))); // slope
+    setBintercept(tf.variable(tf.scalar(Math.random()))); // y intercept
 
-	const draw = (p5) => {
+    // use parent to render the canvas in this ref
+    // (without that p5 will render the canvas outside of your component)
+    p5.createCanvas(canvWidth, canvHeight).parent(canvasParentRef);
+  };
 
-		p5.background(0);
-		p5.stroke(255);
-		p5.strokeWeight(8);
+  const draw = (p5) => {
+    p5.background(0);
+    p5.stroke(255);
+    p5.strokeWeight(8);
 
-		// NOTE: Do not use setState in the draw function or in functions that are executed
-		// in the draw function...
-		// please use normal variables or class properties for these purposes
+    // NOTE: Do not use setState in the draw function or in functions that are executed
+    // in the draw function...
+    // please use normal variables or class properties for these purposes
 
-		tf.tidy(() => {
-			if (x_vals.length > 0) {
-				const ys = tf.tensor1d(y_vals);
+    tf.tidy(() => {
+      if (x_vals.length > 0) {
+        const ys = tf.tensor1d(y_vals);
 
-				// minimize the loss by pred from x, y vals
-				optimizer.minimize(() => loss(predict(x_vals), ys));
-			}
-		});
-		
-		// loop mouse coordinate and plot clicked points
-		for (let i = 0; i< x_vals.length; i++) {
-			let px = mapRange(x_vals[i], initCoordinate, endCoordinate, 0, canvWidth);
-			let py = mapRange(y_vals[i], initCoordinate, endCoordinate, canvHeight, 0);
-			p5.point(px, py)
-		}
+        // minimize the loss by pred from x, y vals
+        optimizer.minimize(() => loss(predict(x_vals), ys));
+      }
+    });
 
-		const lineX = [initCoordinate, 1];
+    // loop mouse coordinate and plot clicked points
+    for (let i = 0; i < x_vals.length; i++) {
+      let px = mapRange(x_vals[i], initCoordinate, endCoordinate, 0, canvWidth);
+      let py = mapRange(
+        y_vals[i],
+        initCoordinate,
+        endCoordinate,
+        canvHeight,
+        0
+      );
+      p5.point(px, py);
+    }
 
-		// clean tensors from predict func
-		const ys = tf.tidy(() => predict(lineX));
+    const lineX = [initCoordinate, 1];
 
-		let lineY = ys.dataSync();
-		// clean tensors to avoid meme leaks
-		ys.dispose();
+    // clean tensors from predict func
+    const ys = tf.tidy(() => predict(lineX));
 
-		// create to points on the line
-		let x1 = mapRange(lineX[0], initCoordinate, endCoordinate, 0, canvWidth);
-		let x2 = mapRange(lineX[1], initCoordinate, endCoordinate, 0, canvWidth);
-	
-		let y1 = mapRange(lineY[0], initCoordinate, endCoordinate, canvHeight, 0);
-		let y2 = mapRange(lineY[1], initCoordinate, endCoordinate, canvHeight, 0);
-	
-		// draw the line between the points
-		p5.strokeWeight(2);
-		p5.line(x1, y1, x2, y2);
-	
-		console.log(tf.memory().numTensors);
-		console.log({x_vals}, {y_vals});
-	};
+    let lineY = ys.dataSync();
+    // clean tensors to avoid meme leaks
+    ys.dispose();
 
-	return (
-		<Sketch setup={setup} draw={draw} mouseClicked={e => {
-			mousePressed(e.mouseX, e.mouseY);
-		}}/>
-	);
-};
+    // create to points on the line
+    let x1 = mapRange(lineX[0], initCoordinate, endCoordinate, 0, canvWidth);
+    let x2 = mapRange(lineX[1], initCoordinate, endCoordinate, 0, canvWidth);
+
+    let y1 = mapRange(lineY[0], initCoordinate, endCoordinate, canvHeight, 0);
+    let y2 = mapRange(lineY[1], initCoordinate, endCoordinate, canvHeight, 0);
+
+    // draw the line between the points
+    p5.strokeWeight(2);
+    p5.line(x1, y1, x2, y2);
+
+    console.log(tf.memory().numTensors);
+    console.log({ x_vals }, { y_vals });
+  };
+
+  return (
+    <Sketch
+      setup={setup}
+      draw={draw}
+      mouseClicked={(e) => {
+        mousePressed(e.mouseX, e.mouseY);
+      }}
+    />
+  );
+}
 
 // https://github.com/atorov/react-hooks-p5js/blob/master/src/components/P5Wrapper/index.jsx
 // https://ericjinks.com/blog/2018/linear-regression-with-tensorflow-js/
