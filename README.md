@@ -4,7 +4,7 @@
 
 ## ⚙ Features
 
-- [Tensorflow @2.8.5](https://www.tensorflow.org/js/models)
+- [TensorFlow @2.8.5](https://www.tensorflow.org/js/models)
 - [React-P5](https://github.com/Gherciu/react-p5#readme)
 - [ES8](https://www.w3schools.com/js/js_2018.asp)
 
@@ -61,4 +61,5 @@ For additional info click [here](https://github.com/moisestech/tf-js-linear-regr
 8. Select Optimizers
 
 ---
+
 [Moises Sanabria](https://www.moises.tech/)
